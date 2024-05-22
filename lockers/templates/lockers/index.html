@@ -10,17 +10,156 @@
 <body>
     <div class="floor-buttons">
         <button id="btn-1F" class="floor-button active" onclick="showFloor('1F')">1F</button>
+        <button id="btn-1-2F" class="floor-button" onclick="showFloor('1-2F')">1-2F</button>
         <button id="btn-2F" class="floor-button" onclick="showFloor('2F')">2F</button>
     </div>
     <div id="lockers-container"></div>
     <script>
         const username = "{{ username }}"; // 현재 로그인한 사용자의 username
+
+        const lockersData = {
+            '1F': `
+                <table>
+                    <tr>
+                        <td><button class="locker">1</button></td>
+                        <td><button class="locker">2</button></td>
+                        <td><button class="locker">3</button></td>
+                        <td><button class="locker">4</button></td>
+                        <td><button class="locker">5</button></td>
+                        <td><button class="locker">6</button></td>
+                        <td><button class="locker">7</button></td>
+                        <td><button class="locker">8</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="locker">9</button></td>
+                        <td><button class="locker">10</button></td>
+                        <td><button class="locker">11</button></td>
+                        <td><button class="locker">12</button></td>
+                        <td><button class="locker">13</button></td>
+                        <td><button class="locker">14</button></td>
+                        <td><button class="locker">15</button></td>
+                        <td><button class="locker">16</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="locker">17</button></td>
+                        <td><button class="locker">18</button></td>
+                        <td><button class="locker">19</button></td>
+                        <td><button class="locker">20</button></td>
+                        <td><button class="locker">21</button></td>
+                        <td><button class="locker">22</button></td>
+                        <td><button class="locker">23</button></td>
+                        <td><button class="locker">24</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="locker">25</button></td>
+                        <td><button class="locker">26</button></td>
+                        <td><button class="locker">27</button></td>
+                        <td><button class="locker">28</button></td>
+                        <td><button class="locker">29</button></td>
+                        <td><button class="locker">30</button></td>
+                        <td><button class="locker">31</button></td>
+                        <td><button class="locker">32</button></td>
+                    </tr>
+                </table>
+            `,
+
+            '1-2F': `
+                <table>
+                    <tr>
+                        <td><button class="locker">1</button></td>
+                        <td><button class="locker">2</button></td>
+                        <td><button class="locker">3</button></td>
+                        <td><button class="locker">4</button></td>
+                        <td><button class="locker">5</button></td>
+                        <td><button class="locker">6</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="locker">7</button></td>
+                        <td><button class="locker">8</button></td>
+                        <td><button class="locker">9</button></td>
+                        <td><button class="locker">10</button></td>
+                        <td><button class="locker">11</button></td>
+                        <td><button class="locker">12</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="locker">13</button></td>
+                        <td><button class="locker">14</button></td>
+                        <td><button class="locker">15</button></td>
+                        <td><button class="locker">16</button></td>
+                        <td><button class="locker">17</button></td>
+                        <td><button class="locker">18</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="locker">19</button></td>
+                        <td><button class="locker">20</button></td>
+                        <td><button class="locker">21</button></td>
+                        <td><button class="locker">22</button></td>
+                        <td><button class="locker">23</button></td>
+                        <td><button class="locker">24</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="locker">25</button></td>
+                        <td><button class="locker">26</button></td>
+                        <td><button class="locker">27</button></td>
+                        <td><button class="locker">28</button></td>
+                        <td><button class="locker">29</button></td>
+                        <td><button class="locker">30</button></td>
+                    </tr>
+                </table>
+                `,
+            '2F': `
+                <table>
+                    <tr>
+                        <td><button class="locker">1</button></td>
+                        <td><button class="locker">2</button></td>
+                        <td><button class="locker">3</button></td>
+                        <td><button class="locker">4</button></td>
+                        <td><button class="locker">5</button></td>
+                        <td><button class="locker">6</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="locker">7</button></td>
+                        <td><button class="locker">8</button></td>
+                        <td><button class="locker">9</button></td>
+                        <td><button class="locker">10</button></td>
+                        <td><button class="locker">11</button></td>
+                        <td><button class="locker">12</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="locker">13</button></td>
+                        <td><button class="locker">14</button></td>
+                        <td><button class="locker">15</button></td>
+                        <td><button class="locker">16</button></td>
+                        <td><button class="locker">17</button></td>
+                        <td><button class="locker">18</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="locker">19</button></td>
+                        <td><button class="locker">20</button></td>
+                        <td><button class="locker">21</button></td>
+                        <td><button class="locker">22</button></td>
+                        <td><button class="locker">23</button></td>
+                        <td><button class="locker">24</button></td>
+                    </tr>
+                </table>
+
+            `
+        };
+
+        function showFloor(floor) {
+            document.getElementById('lockers-container').innerHTML = lockersData[floor];
+            document.querySelectorAll('.floor-button').forEach(button => button.classList.remove('active'));
+            document.getElementById(`btn-${floor}`).classList.add('active');
+        }
+
+        // 초기 로드 시 1층 사물함을 보여줌
+        document.addEventListener('DOMContentLoaded', () => {
+            showFloor('1F');
+        });
     </script>
     <script src="{% static 'js/script.js' %}"></script>
-    <div class="notification-button">Alert
+    <div class="notification-button">
         <button id="btn-notification" class="notification-button" onclick="location.href='{% url 'notifications' %}'">notifications</button>
     </div>
 </body>
 </html>
-
-
