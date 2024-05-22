@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <style>
+        .e1_6 {
+            overflow: hidden;
+            background-color: rgba(255, 238, 238, 1);
+            width: 1512px;
+            height: 982px;
+            position: absolute;
+        }
+        .e1_10 {
+            box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
+            background-color: rgba(255, 255, 255, 1);
+            width: 835px;
+            height: 541px;
+            position: absolute;
+            left: 339px;
+            top: 220px;
+            border-radius: 30px;
+            border: 1px solid rgba(217, 217, 217, 1);
+        }
+        .e1_11 {
+            color: rgba(0, 0, 0, 1);
+            width: 608px;
+            height: 137px;
+            position: absolute;
+            left: 459px;
+            top: 261px;
+            font-family: 'DNF Bit Bit v2';
+            text-align: center;
+            font-size: 100px;
+        }
+        .e1_26, .e1_28 {
+            box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+            background-color: rgba(255, 255, 255, 1);
+            width: 463px;
+            height: 73px;
+            border-radius: 30px;
+            border: 2px solid rgba(99, 99, 99, 1);
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding-left: 90px;
+            box-sizing: border-box;
+        }
+        .e1_26 {
+            top: 443px;
+            left: 580px;
+        }
+        .e1_28 {
+            top: 561px;
+            left: 580px;
+        }
+        .e1_29, .e1_30 {
+            color: rgba(0, 0, 0, 1);
+            height: 68px;
+            font-family: 'DNF Bit Bit v2';
+            font-size: 35px;
+            position: absolute;
+            top: 20px;
+        }
+        .e1_29 {
+            left: 500px;
+            top: 450px;
+        }
+        .e1_30 {
+            left: 480px;
+            top: 575px;
+        }
+        .e51_11290 {
+            box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+            background-color: rgba(255, 255, 255, 1);
+            width: 179px;
+            height: 69px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 0, 0, 1);
+            position: absolute;
+            left: 664px;
+            top: 663px;
+        }
+        .e1_25 {
+            color: rgba(0, 0, 0, 1);
+            width: 179px;
+            height: 69px;
+            font-family: 'DNF Bit Bit v2';
+            text-align: center;
+            font-size: 35px;
+            font-weight: 600;
+            position: absolute;
+            top: 664px;
+            left: 664px;
+            line-height: 69px;
+            cursor: pointer;
+            border-radius: 30px;
+            background-color: rgb(255, 234, 234);
+        }
+        .input-field_1, .input-field_2 {
+            width: 463px;
+            height: 73px;
+            border-radius: 30px;
+            border: none;
+            font-size: 30px;
+            padding-left: 20px;
+            position: absolute;
+            top: 10px;
+            left: 90px;
+            box-sizing: border-box;
+            outline: none;
+            background-color: transparent;
+            z-index: 10;
+        }
+        .input-field_1 {
+            top: 443px;
+            left: 580px;
+        }
+        .input-field_2 {
+            top: 561px;
+            left: 580px;
+        }
+    </style>
+</head>
+<body>
+    <div class="e1_6">
+        <div class="e1_10"></div>
+        <span class="e1_11">Locketing</span>
+        <form method="post">
+            {% csrf_token %}
+            <div class="e1_26"></div>
+            <input type="text" name="username" class="input-field_1" placeholder="Enter your ID" required>
+            <span class="e1_29">ID:</span>
+            <div class="e1_28"></div>
+            <input type="password" name="password" class="input-field_2" placeholder="Enter your password" required>
+            <span class="e1_30">PW:</span>
+            <button type="submit" class="e1_25">Login</button>
+        </form>
+        {% if error %}
+            <p style="color: red; position: absolute; top: 750px; left: 50%; transform: translateX(-50%);">{{ error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
+
