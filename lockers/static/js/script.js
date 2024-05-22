@@ -43,26 +43,23 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 button.textContent = locker.number;
             }
+            
             button.onclick = () => {
-
-                if (isLockerSelected) {
+                if (locker.isOccupied && locker.user === username) {
+                    showActionButtons(button, locker);
+                    return;
+                }
+                if (isLockerSelected && !locker.isOccupied) {
                     alert("Another locker is already selected. You cannot select more.");
                     return;
                 }
-                
                 if (!locker.isOccupied) {
                     locker.isOccupied = true;
                     locker.user = username;
                     button.classList.add('occupied');
                     button.textContent = `${locker.user} - ${locker.number}`;
-                    button.style.backgroundColor = '#dcdcdc'; // 배정된 사물함은 회색으로 표시
-                
+                    button.style.backgroundColor = '#dcdcdc';
                     isLockerSelected = true; // 사물함 선택 상태 업데이트
-
-                } else if (locker.user === username) {
-                    showActionButtons(button, locker);
-                } else {
-                    alert(`Locker ${locker.number} is already occupied by ${locker.user}.`);
                 }
             };
             cell.appendChild(button);
@@ -73,7 +70,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showActionButtons(button, locker) {
-        // 이미 존재하는 배너가 있다면 삭제
         const existingBanner = document.querySelector('.action-banner');
         if (existingBanner) {
             existingBanner.remove();
