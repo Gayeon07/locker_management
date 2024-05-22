@@ -1,14 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>1층 사물함</title>
+    <style>
+        .e74_11287 { 
+	overflow:hidden;
+}
+.e74_11287 { 
+	background-color:rgba(255, 255, 255, 1);
+	width:1518px;
+	height:982px;
+	position:absolute;
+}
+.e74_11288 { 
+	background-color:rgba(255, 238.00000101327896, 238.00000101327896, 1);
+	width:756px;
+	height:170px;
+	position:absolute;
+	left:0px;
+	top:0px;
+}
+.e74_11288 { 
+	border:3px solid rgba(233.31170618534088, 233.31170618534088, 233.31170618534088, 1);
+}
+.e74_11289 { 
+	background-color:rgba(255, 255, 255, 1);
+	width:756px;
+	height:170px;
+	position:absolute;
+	left:756px;
+	top:0px;
+}
+.e74_11289 { 
+	border:3px solid rgba(233.31170618534088, 233.31170618534088, 233.31170618534088, 1);
+}
+.e74_11290 { 
+	color:rgba(0, 0, 0, 1);
+	width:371px;
+	height:170px;
+	position:absolute;
+	left:192px;
+	top:0px;
+	font-family:DNF Bit Bit v2;
+	text-align:center;
+	font-size:40px;
+	letter-spacing:0;
+}
+.e74_11292 { 
+	color:rgba(0, 0, 0, 1);
+	width:371px;
+	height:170px;
+	position:absolute;
+	left:948px;
+	top:0px;
+	font-family:DNF Bit Bit v2;
+	text-align:center;
+	font-size:40px;
+	letter-spacing:0;
+}
+.e74_11293 { 
+	background-color:rgba(134.5523303747177, 134.5523303747177, 134.5523303747177, 1);
+	width:70px;
+	height:80px;
+	position:absolute;
+	left:1372px;
+	top:824px;
+}
+.e74_11293 { 
+	border:1px solid rgba(217.0000022649765, 217.0000022649765, 217.0000022649765, 1);
+}
+
+    </style>
 </head>
 <body>
-    <h2>1층 사물함</h2>
-    <ul>
-        {% for locker in lockers %}
-            <li>{{ locker.number }} - {% if locker.is_available %}Available{% else %}Occupied{% endif %}</li>
-        {% endfor %}
-    </ul>
+    <div class=e74_11287>
+        <div class="e74_11288"></div>
+        <div class="e74_11289"></div><span  class="e74_11290">1F</span><span  class="e74_11292">2F</span>
+        <div class="e74_11293"></div>
+      </div>
 </body>
 </html>
