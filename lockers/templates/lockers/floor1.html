@@ -1,83 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
     <title>1층 사물함</title>
-    <style>
-        .e74_11287 { 
-	overflow:hidden;
-}
-.e74_11287 { 
-	background-color:rgba(255, 255, 255, 1);
-	width:1518px;
-	height:982px;
-	position:absolute;
-}
-.e74_11288 { 
-	background-color:rgba(255, 238.00000101327896, 238.00000101327896, 1);
-	width:756px;
-	height:170px;
-	position:absolute;
-	left:0px;
-	top:0px;
-}
-.e74_11288 { 
-	border:3px solid rgba(233.31170618534088, 233.31170618534088, 233.31170618534088, 1);
-}
-.e74_11289 { 
-	background-color:rgba(255, 255, 255, 1);
-	width:756px;
-	height:170px;
-	position:absolute;
-	left:756px;
-	top:0px;
-}
-.e74_11289 { 
-	border:3px solid rgba(233.31170618534088, 233.31170618534088, 233.31170618534088, 1);
-}
-.e74_11290 { 
-	color:rgba(0, 0, 0, 1);
-	width:371px;
-	height:170px;
-	position:absolute;
-	left:192px;
-	top:0px;
-	font-family:DNF Bit Bit v2;
-	text-align:center;
-	font-size:40px;
-	letter-spacing:0;
-}
-.e74_11292 { 
-	color:rgba(0, 0, 0, 1);
-	width:371px;
-	height:170px;
-	position:absolute;
-	left:948px;
-	top:0px;
-	font-family:DNF Bit Bit v2;
-	text-align:center;
-	font-size:40px;
-	letter-spacing:0;
-}
-.e74_11293 { 
-	background-color:rgba(134.5523303747177, 134.5523303747177, 134.5523303747177, 1);
-	width:70px;
-	height:80px;
-	position:absolute;
-	left:1372px;
-	top:824px;
-}
-.e74_11293 { 
-	border:1px solid rgba(217.0000022649765, 217.0000022649765, 217.0000022649765, 1);
-}
-
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+	<link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <div class=e74_11287>
-        <div class="e74_11288"></div>
-        <div class="e74_11289"></div><span  class="e74_11290">1F</span><span  class="e74_11292">2F</span>
-        <div class="e74_11293"></div>
-      </div>
+    <div class="floor-buttons">
+        <button id="btn-1F" class="floor-button active" onclick="location.href='floor1.html'">1F</button>
+        <button id="btn-2F" class="floor-button" onclick="location.href='floor2.html'">2F</button>
+    </div>
+    <div id="lockers-1F" class="lockers active">
+        <table>
+            <tr>
+                <td><button class="locker">1</button></td>
+                <td><button class="locker">2</button></td>
+                <td><button class="locker">3</button></td>
+            </tr>
+            <tr>
+                <td><button class="locker">4</button></td>
+                <td><button class="locker">5</button></td>
+                <td><button class="locker">6</button></td>
+            </tr>
+            <tr>
+                <td><button class="locker">7</button></td>
+                <td><button class="locker">8</button></td>
+                <td><button class="locker">9</button></td>
+            </tr>
+            <tr>
+                <td><button class="locker">10</button></td>
+                <td><button class="locker">11</button></td>
+                <td><button class="locker">12</button></td>
+            </tr>
+        </table>
+    </div>
+    <script src="{% static 'js/scripts.js' %}"></script>
 </body>
 </html>
+
