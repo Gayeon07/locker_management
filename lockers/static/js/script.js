@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
         '2F': Array.from({ length: 12 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null }))
     };
 
+    // 하나의 사물함이 선택되었는지 추적
+    let isLockerSelected = false;
+
     window.showFloor = function(floor) {
         console.log(`Showing floor: ${floor}`); // 디버깅을 위한 콘솔 로그
         var floors = ['1F', '2F'];
@@ -41,12 +44,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.textContent = locker.number;
             }
             button.onclick = () => {
+
+                if (isLockerSelected) {
+                    alert("Another locker is already selected. You cannot select more.");
+                    return;
+                }
+                
                 if (!locker.isOccupied) {
                     locker.isOccupied = true;
                     locker.user = username;
                     button.classList.add('occupied');
                     button.textContent = `${locker.user} - ${locker.number}`;
                     button.style.backgroundColor = '#dcdcdc'; // 배정된 사물함은 회색으로 표시
+                
+                    isLockerSelected = true; // 사물함 선택 상태 업데이트
+
                 } else if (locker.user === username) {
                     showActionButtons(button, locker);
                 } else {
@@ -87,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
             button.textContent = locker.number;
             button.style.backgroundColor = ''; // 원래 색으로 돌아감
             actionContainer.remove();
+            isLockerSelected = false; // 사물함 선택 해제
         };
 
         actionContainer.appendChild(giftButton);
