@@ -96,3 +96,10 @@ td {
     cursor: pointer;
 }
 
+.notification-button {
+    position: fixed; /* 화면에 고정 */
+    right: 20px; /* 오른쪽 끝에서 20px 떨어진 위치 */
+    bottom: 20px; /* 하단에서 20px 떨어진 위치 */
+    z-index: 1000; /* 다른 요소들 위에 표시 */
+    cursor: pointer; /* 마우스 오버 시 커서 변경 */
+}
