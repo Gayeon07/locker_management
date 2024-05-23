@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     locker.isOccupied = true;
                     locker.user = username;
                     button.classList.add('occupied');
-                    button.textContent = `${locker.user} - ${locker.number}`;
+                    button.textContent = `${locker.user}
+                    ${locker.number}`;
                     button.style.backgroundColor = '#dcdcdc';
                     isLockerSelected = true; // 사물함 선택 상태 업데이트
                 }
@@ -83,13 +84,23 @@ document.addEventListener('DOMContentLoaded', function() {
         actionContainer.className = 'action-banner';
 
         const giftButton = document.createElement('button');
-        giftButton.textContent = '사물함 선물하기';
-        giftButton.onclick = () => alert(`You chose to gift locker ${locker.number}`);
+        giftButton.textContent = 'Gift';
+        giftButton.onclick = () => {
+            const recipient = prompt("Enter the recipient's ID:");
+            if (recipient !== null) {
+                alert(`You chose to gift locker ${locker.number} to ${recipient}`);
+            }
+        };
 
         const swapButton = document.createElement('button');
-        swapButton.textContent = '사물함 맞교환';
-        swapButton.onclick = () => alert(`You chose to swap locker ${locker.number}`);
-
+        swapButton.textContent = ' Exchange ';
+        swapButton.onclick = () => {
+            const otherPerson = prompt("Enter the ID of the person you want to swap with:");
+            if (otherPerson !== null) {
+                alert(`You chose to swap locker ${locker.number} with ${otherPerson}`);
+            }
+        };
+        
         const emptyButton = document.createElement('button');
         emptyButton.textContent = 'Empty';
         emptyButton.onclick = () => {
