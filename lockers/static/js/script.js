@@ -117,5 +117,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 기본으로 1층을 보여줍니다.
-    showFloor('1F');
+    showFloor('1F - 1');
 });
