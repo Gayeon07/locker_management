@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded.'); // 디버깅을 위한 콘솔 로그
 
     const lockersData = {
-        '1F': Array.from({ length: 32 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
+        '1F - 1': Array.from({ length: 32 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
         '1F - 2': Array.from({ length: 30 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
         '2F': Array.from({ length: 24 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null }))
     };
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.showFloor = function(floor) {
         console.log(`Showing floor: ${floor}`); // 디버깅을 위한 콘솔 로그
-        var floors = ['1F', '2F', '1F - 2'];
+        var floors = ['1F - 1', '2F', '1F - 2'];
         floors.forEach(function(f) {
             document.getElementById('btn-' + f).classList.remove('active');
         });
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let row;
 
         // 층마다 사물함을 몇 개씩 가로로 배치할지 결정하는 변수 추가
-        const lockersPerRow = floor === '1F' ? 8 : 6;
+        const lockersPerRow = floor === '1F - 1' ? 8 : 6;
 
         data.forEach((locker, index) => {
             if (index % lockersPerRow === 0) {

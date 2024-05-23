@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Locker(models.Model):
     FLOOR_CHOICES = [
-        (1, '1층'),
+        (1-1, '1층-1'),
         (1-2, '1층-2'),
         (2, '2층'),
     ]
