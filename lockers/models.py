@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Locker(models.Model):
     FLOOR_CHOICES = [
         (1, '1층'),
+        (1-2, '1층-2'),
         (2, '2층'),
     ]
     number = models.CharField(max_length=10)

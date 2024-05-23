@@ -7,9 +7,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        h1 {
+            background-color: lightpink;
+            padding: 10px; /* 추가된 패딩으로 더 나은 시각적 효과 */
+            border-radius: 5px; /* 모서리를 부드럽게 */
+        }
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
 </head>
 <body>
     <h1>Notifications</h1>
     <!-- 알림 내용을 여기에 추가합니다. -->
+    <button class="back-button" onclick="history.back()">Back</button>
 </body>
 </html>
+
+
+

@@ -3,8 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded.'); // 디버깅을 위한 콘솔 로그
 
     const lockersData = {
-        '1F': Array.from({ length: 12 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
-        '2F': Array.from({ length: 12 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null }))
+        '1F': Array.from({ length: 32 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
+        '1F - 2': Array.from({ length: 30 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
+        '2F': Array.from({ length: 24 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null }))
     };
 
     // 하나의 사물함이 선택되었는지 추적
@@ -12,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.showFloor = function(floor) {
         console.log(`Showing floor: ${floor}`); // 디버깅을 위한 콘솔 로그
-        var floors = ['1F', '2F'];
+        var floors = ['1F', '2F', '1F - 2'];
         floors.forEach(function(f) {
             document.getElementById('btn-' + f).classList.remove('active');
         });
@@ -29,8 +30,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = lockersData[floor];
         let row;
 
+        // 층마다 사물함을 몇 개씩 가로로 배치할지 결정하는 변수 추가
+        const lockersPerRow = floor === '1F' ? 8 : 6;
+
         data.forEach((locker, index) => {
-            if (index % 3 === 0) {
+            if (index % lockersPerRow === 0) {
                 row = document.createElement('tr');
                 table.appendChild(row);
             }
@@ -43,26 +47,23 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 button.textContent = locker.number;
             }
+            
             button.onclick = () => {
-
-                if (isLockerSelected) {
+                if (locker.isOccupied && locker.user === username) {
+                    showActionButtons(button, locker);
+                    return;
+                }
+                if (isLockerSelected && !locker.isOccupied) {
                     alert("Another locker is already selected. You cannot select more.");
                     return;
                 }
-                
                 if (!locker.isOccupied) {
                     locker.isOccupied = true;
                     locker.user = username;
                     button.classList.add('occupied');
                     button.textContent = `${locker.user} - ${locker.number}`;
-                    button.style.backgroundColor = '#dcdcdc'; // 배정된 사물함은 회색으로 표시
-                
+                    button.style.backgroundColor = '#dcdcdc';
                     isLockerSelected = true; // 사물함 선택 상태 업데이트
-
-                } else if (locker.user === username) {
-                    showActionButtons(button, locker);
-                } else {
-                    alert(`Locker ${locker.number} is already occupied by ${locker.user}.`);
                 }
             };
             cell.appendChild(button);
@@ -73,7 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showActionButtons(button, locker) {
-        // 이미 존재하는 배너가 있다면 삭제
         const existingBanner = document.querySelector('.action-banner');
         if (existingBanner) {
             existingBanner.remove();
