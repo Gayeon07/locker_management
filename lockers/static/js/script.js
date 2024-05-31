@@ -1,7 +1,5 @@
-// static/js/scripts.js
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded.'); // 디버깅을 위한 콘솔 로그
-
 
     // Load or initialize locker data from localStorage
     let lockersData = localStorage.getItem('lockersData') ?
@@ -17,8 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('lockersData', JSON.stringify(lockersData));
     }
 
-    // Check if a locker is already selected on page load
-    let isLockerSelected = localStorage.getItem('isLockerSelected') === 'true';
+    // Check if a locker is already selected by the current user on page load
+    let isLockerSelected = localStorage.getItem(`isLockerSelected_${username}`) === 'true';
 
     window.showFloor = function(floor) {
         console.log(`Showing floor: ${floor}`); // 디버깅을 위한 콘솔 로그
@@ -71,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (locker.isOccupied && locker.user === username) {
             showActionButtons(button, locker);
         } else if (isLockerSelected) {
-            alert("Another locker is already selected. You cannot select more.");
+            alert("You have already selected another locker.");
         } else if (!locker.isOccupied) {
             locker.isOccupied = true;
             locker.user = username;
@@ -80,10 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
             button.style.backgroundColor = '#dcdcdc';
             isLockerSelected = true;
             saveLockerData(); // Save changes to localStorage
-            localStorage.setItem('isLockerSelected', 'true'); // Save the selection state
+            localStorage.setItem(`isLockerSelected_${username}`, 'true'); // Save the selection state for the current user
         }
     }
-
 
     function showActionButtons(button, locker) {
         const existingBanner = document.querySelector('.action-banner');
@@ -151,9 +148,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (actionBanner) {
             actionBanner.remove();
         }
-        localStorage.setItem('isLockerSelected', 'false');  // Reset the selection state
-    
+        localStorage.setItem(`isLockerSelected_${username}`, 'false');  // Reset the selection state for the current user
     }
+
     function positionActionBanner(button, container) {
         const rect = button.getBoundingClientRect();
         container.style.position = 'absolute';
@@ -161,8 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
         container.style.left = `${rect.left + window.scrollX}px`;
         container.style.zIndex = 1000;
     }
-
-
 
     function sendNotification(recipientId, message) {
         fetch('/send-notification/', {
@@ -197,7 +192,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-
     // 기본으로 1층을 보여줍니다.
     showFloor('1F - 1');
 });
