@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded.'); // 디버깅을 위한 콘솔 로그
 
+
     // Load or initialize locker data from localStorage
     let lockersData = localStorage.getItem('lockersData') ?
                       JSON.parse(localStorage.getItem('lockersData')) :
@@ -62,6 +63,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function lockerButtonClicked(button, locker) {
+        if (locker.isOccupied && locker.user !== username) {
+            alert("This locker is occupied by another user.");
+            return;
+        }
+
         if (locker.isOccupied && locker.user === username) {
             showActionButtons(button, locker);
         } else if (isLockerSelected) {
@@ -126,18 +132,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const emptyButton = document.createElement('button');
         emptyButton.textContent = 'Empty';
-        emptyButton.onclick = () => {
-            locker.isOccupied = false;
-            locker.user = null;
-            button.classList.remove('occupied');
-            button.textContent = locker.number;
-            button.style.backgroundColor = '';
-            container.remove();
-            isLockerSelected = false;
-        };
+        emptyButton.onclick = () => emptyButtonClicked(locker, button);
         container.appendChild(emptyButton);
     }
 
+    function emptyButtonClicked(locker, button) {
+        locker.isOccupied = false;
+        locker.user = null;
+        button.classList.remove('occupied');
+        button.textContent = locker.number;
+        button.style.backgroundColor = '';
+        isLockerSelected = false;
+        saveLockerData();  // Save the changes to localStorage
+    
+        // Remove the action banner from the view
+        const actionBanner = document.querySelector('.action-banner');
+        if (actionBanner) {
+            actionBanner.remove();
+        }
+    
+    }
     function positionActionBanner(button, container) {
         const rect = button.getBoundingClientRect();
         container.style.position = 'absolute';
