@@ -1,6 +1,32 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded.'); // 디버깅을 위한 콘솔 로그
 
+    // 로컬 스토리지 초기화 함수
+    function clearLocalStorage() {
+        localStorage.clear(); // 로컬 스토리지 전체를 초기화
+        console.log('Local storage cleared');
+    }
+
+    // 초기화가 필요한 경우 아래 함수 호출
+    //clearLocalStorage(); // 주석을 제거하면 로컬 스토리지 전체를 초기화합니다.
+
+    // 로그인 폼 처리
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(event) {
+            const username = document.getElementById('username').value;
+            localStorage.setItem('username', username);
+        });
+    }
+
+    // Load username from localStorage
+    //const username = localStorage.getItem('username');
+    //if (!username) {
+        //alert('Please login first.');
+        //return;
+    //}
+    //console.log('Logged in as:', username);
+
     // Load or initialize locker data from localStorage
     let lockersData = localStorage.getItem('lockersData') ?
                       JSON.parse(localStorage.getItem('lockersData')) :
@@ -10,6 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
                           '2F': Array.from({ length: 24 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null }))
                       };
 
+    console.log('Initial Lockers Data:', lockersData);
+
     // Function to save locker data to localStorage
     function saveLockerData() {
         localStorage.setItem('lockersData', JSON.stringify(lockersData));
@@ -17,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Check if a locker is already selected by the current user on page load
     let isLockerSelected = localStorage.getItem(`isLockerSelected_${username}`) === 'true';
+    console.log(`isLockerSelected on load for ${username}:`, isLockerSelected);
 
     window.showFloor = function(floor) {
         console.log(`Showing floor: ${floor}`); // 디버깅을 위한 콘솔 로그
@@ -61,6 +90,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function lockerButtonClicked(button, locker) {
+        console.log('Locker button clicked:', locker);
+
         if (locker.isOccupied && locker.user !== username) {
             alert("This locker is occupied by another user.");
             return;
@@ -79,10 +110,12 @@ document.addEventListener('DOMContentLoaded', function() {
             isLockerSelected = true;
             saveLockerData(); // Save changes to localStorage
             localStorage.setItem(`isLockerSelected_${username}`, 'true'); // Save the selection state for the current user
+            console.log(`Locker ${locker.number} assigned to ${username}`);
         }
     }
 
     function showActionButtons(button, locker) {
+        console.log('Showing action buttons for locker:', locker);
         const existingBanner = document.querySelector('.action-banner');
         if (existingBanner) {
             existingBanner.remove();
@@ -113,7 +146,14 @@ document.addEventListener('DOMContentLoaded', function() {
         giftButton.onclick = function() {
             const recipient = prompt("Enter the recipient's ID:");
             if (recipient) {
-                alert(`You chose to gift locker ${locker.number} to ${recipient}`);
+                if (isUserHasLocker(recipient)) {
+                    alert("The user already has a locker assigned.");
+                } else {
+                    giftLockerToUser(locker, recipient, button);
+                    saveLockerData();
+                    alert(`Locker ${locker.number} has been gifted to ${recipient}`);
+                    container.remove();
+                }
             }
         };
         container.appendChild(giftButton);
@@ -135,6 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function emptyButtonClicked(locker, button) {
+        console.log('Emptying locker:', locker);
         locker.isOccupied = false;
         locker.user = null;
         button.classList.remove('occupied');
@@ -164,13 +205,13 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
+                'X-CSRFToken': getCSRFToken()
             },
             body: JSON.stringify({ recipient_id: recipientId, message: message })
         }).then(response => response.json())
           .then(data => {
             if(data.status === 'success') {
-                alert('알림이 성공적으로 전송되었습니다.');
+                alert('Notification sent successfully.');
             }
         });
     }
@@ -181,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch(`/mark-notification-read/${notificationId}/`, {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': csrfToken
+                    'X-CSRFToken': getCSRFToken()
                 }
             }).then(response => {
                 if (response.ok) {
@@ -192,6 +233,48 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Check if a user already has a locker assigned
+    function isUserHasLocker(username) {
+        for (let floor in lockersData) {
+            if (lockersData[floor].some(locker => locker.user === username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Gift locker to another user
+    function giftLockerToUser(locker, recipient, button) {
+        console.log(`Gifting locker ${locker.number} to ${recipient}`);
+        locker.isOccupied = true;
+        locker.user = recipient;
+        button.textContent = `${locker.user} - ${locker.number}`;
+        button.classList.add('occupied');
+        button.style.backgroundColor = '#dcdcdc';
+        // Update isLockerSelected state and local storage for the current user
+        isLockerSelected = false;
+        localStorage.setItem(`isLockerSelected_${username}`, 'false');
+        saveLockerData();
+    }
+
+    // Get CSRF token from cookie
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    localStorage.removeItem('currentUsername');
+
     // 기본으로 1층을 보여줍니다.
     showFloor('1F - 1');
 });
+
