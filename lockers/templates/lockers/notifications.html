@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <title>Notifications</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% load static %}
+    
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
-        h1 {
+        h1,h2 {
             background-color: rgb(251, 226, 229);
             font-family: 'DNF Bit Bit v2';
             padding: 10px; /* 추가된 패딩으로 더 나은 시각적 효과 */
             width: 100%; /* 화면 전체 너비로 설정 */
             box-sizing: border-box; /* padding이 너비에 포함되도록 설정 */
             margin: 0; /* 기본 마진 제거 */
+            text-align: center;
+        }
+        
+        p{
+            font-family: 'DNF Bit Bit v2';
+            padding: 10px; /* 추가된 패딩으로 더 나은 시각적 효과 */
+            width: 100%; /* 화면 전체 너비로 설정 */
             text-align: center;
         }
         .back-button {
@@ -58,12 +65,39 @@
         .notification.read {
             color: #666;
         }
+        .button-container button {
+            padding: 7px 15px;
+            background-color: #ffffff;
+            color: #333;
+            font-family: 'DNF Bit Bit v2';
+            text-decoration: none;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .button-container button:hover {
+            background-color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
     <h1>Notifications</h1>
     <div id="notifications-container">
         <!-- 알림 내용이 여기에 동적으로 삽입됩니다. -->
+        <div class="gift-container">
+            <h2>Gift</h2>
+            <p>1F - 1 - 10 Shin Jihye wants to give you the locker.</p>
+            <div class="button-container">
+                <button class="yes-button">Yes</button>
+                <button class="no-button">No</button>
+            </div>
+        </div>
     </div>
     <button class="back-button" onclick="history.back()">Back</button>
     <script>
