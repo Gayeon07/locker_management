@@ -41,31 +41,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const cell = document.createElement('td');
             const button = document.createElement('button');
             button.className = 'locker';
-            if (locker.isOccupied) {
-                button.classList.add('occupied');
-                button.textContent = `${locker.user} - ${locker.number}`;
-            } else {
-                button.textContent = locker.number;
-            }
-            
-            button.onclick = () => {
-                if (locker.isOccupied && locker.user === username) {
-                    showActionButtons(button, locker);
-                    return;
-                }
-                if (isLockerSelected && !locker.isOccupied) {
-                    alert("Another locker is already selected. You cannot select more.");
-                    return;
-                }
-                if (!locker.isOccupied) {
-                    locker.isOccupied = true;
-                    locker.user = username;
-                    button.classList.add('occupied');
-                    button.textContent = `${locker.user}
-                    ${locker.number}`;
-                    button.style.backgroundColor = '#dcdcdc';
-                    isLockerSelected = true; // 사물함 선택 상태 업데이트
-                }
+            button.textContent = locker.isOccupied ? `${locker.user} - ${locker.number}` : locker.number;
+            button.onclick = function(event) {
+                event.stopPropagation(); // Prevent event from bubbling to higher elements
+                lockerButtonClicked(button, locker);
             };
             cell.appendChild(button);
             row.appendChild(cell);
@@ -73,6 +52,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         container.appendChild(table);
     }
+
+    function lockerButtonClicked(button, locker) {
+        if (locker.isOccupied && locker.user === username) {
+            showActionButtons(button, locker);
+        } else if (isLockerSelected && !locker.isOccupied) {
+            alert("Another locker is already selected. You cannot select more.");
+        } else if (!locker.isOccupied) {
+            locker.isOccupied = true;
+            locker.user = username;
+            button.classList.add('occupied');
+            button.textContent = `${locker.user} ${locker.number}`;
+            button.style.backgroundColor = '#dcdcdc';
+            isLockerSelected = true;
+        }
+    }
+
 
     function showActionButtons(button, locker) {
         const existingBanner = document.querySelector('.action-banner');
@@ -82,25 +77,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const actionContainer = document.createElement('div');
         actionContainer.className = 'action-banner';
+        actionContainer.onclick = function(event) {
+            event.stopPropagation(); // Prevent click event from propagating to higher elements
+        };
 
+        addButtonsToActionContainer(actionContainer, locker, button);
+
+        document.body.appendChild(actionContainer);
+        positionActionBanner(button, actionContainer);
+
+        // Add event listener to body to remove banner when clicking outside of it
+        document.body.addEventListener('click', function(event) {
+            if (!actionContainer.contains(event.target)) {
+                actionContainer.remove();
+            }
+        }, { once: true }); // Listener will auto-remove after execution
+    }
+
+    function addButtonsToActionContainer(container, locker, button) {
         const giftButton = document.createElement('button');
         giftButton.textContent = 'Gift';
-        giftButton.onclick = () => {
+        giftButton.onclick = function() {
             const recipient = prompt("Enter the recipient's ID:");
-            if (recipient !== null) {
+            if (recipient) {
                 alert(`You chose to gift locker ${locker.number} to ${recipient}`);
             }
         };
+        container.appendChild(giftButton);
 
         const swapButton = document.createElement('button');
-        swapButton.textContent = ' Exchange ';
-        swapButton.onclick = () => {
+        swapButton.textContent = 'Exchange';
+        swapButton.onclick = function() {
             const otherPerson = prompt("Enter the ID of the person you want to swap with:");
-            if (otherPerson !== null) {
+            if (otherPerson) {
                 alert(`You chose to swap locker ${locker.number} with ${otherPerson}`);
             }
         };
-        
+        container.appendChild(swapButton);
+
         const emptyButton = document.createElement('button');
         emptyButton.textContent = 'Empty';
         emptyButton.onclick = () => {
@@ -108,24 +122,56 @@ document.addEventListener('DOMContentLoaded', function() {
             locker.user = null;
             button.classList.remove('occupied');
             button.textContent = locker.number;
-            button.style.backgroundColor = ''; // 원래 색으로 돌아감
-            actionContainer.remove();
-            isLockerSelected = false; // 사물함 선택 해제
+            button.style.backgroundColor = '';
+            container.remove();
+            isLockerSelected = false;
         };
-
-        actionContainer.appendChild(giftButton);
-        actionContainer.appendChild(swapButton);
-        actionContainer.appendChild(emptyButton);
-
-        // 배너를 사물함 칸 아래로 위치 조정
-        const rect = button.getBoundingClientRect();
-        actionContainer.style.position = 'absolute';
-        actionContainer.style.top = `${rect.bottom + window.scrollY + 10}px`;
-        actionContainer.style.left = `${rect.left + window.scrollX}px`;
-        actionContainer.style.zIndex = 1000;
-
-        document.body.appendChild(actionContainer);
+        container.appendChild(emptyButton);
     }
+
+    function positionActionBanner(button, container) {
+        const rect = button.getBoundingClientRect();
+        container.style.position = 'absolute';
+        container.style.top = `${rect.bottom + window.scrollY}px`;
+        container.style.left = `${rect.left + window.scrollX}px`;
+        container.style.zIndex = 1000;
+    }
+
+
+
+    function sendNotification(recipientId, message) {
+        fetch('/send-notification/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ recipient_id: recipientId, message: message })
+        }).then(response => response.json())
+          .then(data => {
+            if(data.status === 'success') {
+                alert('알림이 성공적으로 전송되었습니다.');
+            }
+        });
+    }
+    
+    document.querySelectorAll('.notification').forEach(notification => {
+        notification.addEventListener('click', () => {
+            const notificationId = notification.dataset.id;
+            fetch(`/mark-notification-read/${notificationId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            }).then(response => {
+                if (response.ok) {
+                    notification.classList.remove('unread');
+                    notification.classList.add('read');
+                }
+            });
+        });
+    });
+    
 
     // 기본으로 1층을 보여줍니다.
     showFloor('1F - 1');
