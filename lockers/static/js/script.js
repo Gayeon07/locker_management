@@ -2,11 +2,19 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded.'); // 디버깅을 위한 콘솔 로그
 
-    const lockersData = {
-        '1F - 1': Array.from({ length: 32 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
-        '1F - 2': Array.from({ length: 30 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
-        '2F': Array.from({ length: 24 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null }))
-    };
+    // Load or initialize locker data from localStorage
+    let lockersData = localStorage.getItem('lockersData') ?
+                      JSON.parse(localStorage.getItem('lockersData')) :
+                      {
+                          '1F - 1': Array.from({ length: 32 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
+                          '1F - 2': Array.from({ length: 30 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
+                          '2F': Array.from({ length: 24 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null }))
+                      };
+
+    // Function to save locker data to localStorage
+    function saveLockerData() {
+        localStorage.setItem('lockersData', JSON.stringify(lockersData));
+    }
 
     // 하나의 사물함이 선택되었는지 추적
     let isLockerSelected = false;
@@ -56,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function lockerButtonClicked(button, locker) {
         if (locker.isOccupied && locker.user === username) {
             showActionButtons(button, locker);
-        } else if (isLockerSelected && !locker.isOccupied) {
+        } else if (isLockerSelected) {
             alert("Another locker is already selected. You cannot select more.");
         } else if (!locker.isOccupied) {
             locker.isOccupied = true;
@@ -65,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
             button.textContent = `${locker.user} ${locker.number}`;
             button.style.backgroundColor = '#dcdcdc';
             isLockerSelected = true;
+            saveLockerData(); // Save changes to localStorage
         }
     }
 
