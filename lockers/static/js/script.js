@@ -163,7 +163,11 @@ document.addEventListener('DOMContentLoaded', function() {
         swapButton.onclick = function() {
             const otherPerson = prompt("Enter the ID of the person you want to swap with:");
             if (otherPerson) {
-                alert(`You chose to swap locker ${locker.number} with ${otherPerson}`);
+                if (isUserHasLocker(otherPerson)) {
+                    swapLockers(locker, otherPerson);
+                } else {
+                    alert("The user does not have a locker assigned. Exchange is not possible.");
+                }
             }
         };
         container.appendChild(swapButton);
@@ -256,6 +260,54 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem(`isLockerSelected_${username}`, 'false');
         saveLockerData();
     }
+
+    // Swap lockers between two users
+    function swapLockers(myLocker, otherPerson) {
+        const theirLocker = getLockerByUser(otherPerson);
+
+        if (theirLocker) {
+            // Swap the users
+            const tempUser = myLocker.user;
+            myLocker.user = theirLocker.user;
+            theirLocker.user = tempUser;
+
+            // Update UI
+            updateLockerButton(myLocker);
+            updateLockerButton(theirLocker);
+
+            // Save data
+            saveLockerData();
+            alert(`Locker ${myLocker.number} has been swapped with locker ${theirLocker.number}`);
+
+            container.remove();
+        }
+    }
+
+    function getLockerByUser(username) {
+        for (let floor in lockersData) {
+            const locker = lockersData[floor].find(locker => locker.user === username);
+            if (locker) {
+                return locker;
+            }
+        }
+        return null;
+    }
+
+    function updateLockerButton(locker) {
+        const floor = Object.keys(lockersData).find(f => lockersData[f].includes(locker));
+        const lockerIndex = lockersData[floor].indexOf(locker);
+        const container = document.getElementById('lockers-container');
+        const button = container.getElementsByClassName('locker')[lockerIndex];
+        button.textContent = locker.isOccupied ? `${locker.user} - ${locker.number}` : locker.number;
+        if (locker.isOccupied) {
+            button.classList.add('occupied');
+            button.style.backgroundColor = '#dcdcdc';
+        } else {
+            button.classList.remove('occupied');
+            button.style.backgroundColor = '';
+        }
+    }
+
 
     // Get CSRF token from cookie
     function getCSRFToken() {
