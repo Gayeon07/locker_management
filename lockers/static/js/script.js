@@ -113,7 +113,12 @@ document.addEventListener('DOMContentLoaded', function() {
         giftButton.onclick = function() {
             const recipient = prompt("Enter the recipient's ID:");
             if (recipient) {
-                alert(`You chose to gift locker ${locker.number} to ${recipient}`);
+                if (isUserHasLocker(recipient)) {
+                    alert("The user already has a locker assigned.");
+                } else {
+                    giftLockerToUser(locker, recipient, button);
+                    alert(`Locker ${locker.number} has been gifted to ${recipient}`);
+                }
             }
         };
         container.appendChild(giftButton);
@@ -164,13 +169,13 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
+                'X-CSRFToken': getCSRFToken()
             },
             body: JSON.stringify({ recipient_id: recipientId, message: message })
         }).then(response => response.json())
           .then(data => {
             if(data.status === 'success') {
-                alert('알림이 성공적으로 전송되었습니다.');
+                alert('Notification sent successfully.');
             }
         });
     }
@@ -181,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch(`/mark-notification-read/${notificationId}/`, {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': csrfToken
+                    'X-CSRFToken': getCSRFToken()
                 }
             }).then(response => {
                 if (response.ok) {
@@ -192,6 +197,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Check if a user already has a locker assigned
+    function isUserHasLocker(username) {
+        for (let floor in lockersData) {
+            if (lockersData[floor].some(locker => locker.user === username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Gift locker to another user
+    function giftLockerToUser(locker, recipient, button) {
+        locker.user = recipient;
+        isLockerSelected = false;
+        sessionStorage.setItem(`isLockerSelected_${username}`, 'false');
+        button.textContent = `${locker.user} - ${locker.number}`;
+        button.classList.add('occupied');
+        button.style.backgroundColor = '#dcdcdc';
+        saveLockerData();
+    }
+
+    // Get CSRF token from cookie
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
     // 기본으로 1층을 보여줍니다.
     showFloor('1F - 1');
 });
