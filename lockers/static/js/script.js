@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('lockersData', JSON.stringify(lockersData));
     }
 
-    // 하나의 사물함이 선택되었는지 추적
-    let isLockerSelected = false;
+    // Check if a locker is already selected on page load
+    let isLockerSelected = localStorage.getItem('isLockerSelected') === 'true';
 
     window.showFloor = function(floor) {
         console.log(`Showing floor: ${floor}`); // 디버깅을 위한 콘솔 로그
@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
             button.style.backgroundColor = '#dcdcdc';
             isLockerSelected = true;
             saveLockerData(); // Save changes to localStorage
+            localStorage.setItem('isLockerSelected', 'true'); // Save the selection state
         }
     }
 
@@ -150,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (actionBanner) {
             actionBanner.remove();
         }
+        localStorage.setItem('isLockerSelected', 'false');  // Reset the selection state
     
     }
     function positionActionBanner(button, container) {
