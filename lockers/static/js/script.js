@@ -55,8 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
             button.className = 'locker';
             button.textContent = locker.isOccupied ? `${locker.user} - ${locker.number}` : locker.number;
             button.onclick = function(event) {
-                event.stopPropagation();
-                lockerButtonClicked(button, locker);
+                event.stopPropagation(); // Prevent event propagation to higher DOM elements
+                lockerButtonClicked(button, locker); // Call function when locker button is clicked
             };
             cell.appendChild(button);
             row.appendChild(cell);
@@ -65,25 +65,26 @@ document.addEventListener('DOMContentLoaded', function() {
         container.appendChild(table);
     }
 
+    // Handles locker button click events
     function lockerButtonClicked(button, locker) {
         if (locker.isOccupied && locker.user !== username) {
-            alert("This locker is occupied by another user.");
+            alert("This locker is occupied by another user."); // Alert if locker is occupied by another user
             return;
         }
 
         if (locker.isOccupied && locker.user === username) {
-            showActionButtons(button, locker);
+            showActionButtons(button, locker); // Show options if locker is occupied by the current user
         } else if (isLockerSelected) {
-            alert("You already have a locker assigned.");
+            alert("You already have a locker assigned."); // Alert if user already has a locker
         } else if (!locker.isOccupied) {
             locker.isOccupied = true;
             locker.user = username;
-            button.classList.add('occupied');
+            button.classList.add('occupied'); // Change button style to indicate occupation
             button.textContent = `${locker.user} ${locker.number}`;
             button.style.backgroundColor = '#dcdcdc';
             isLockerSelected = true;
             saveLockerData();
-            localStorage.setItem(`isLockerSelected_${username}`, 'true');
+            localStorage.setItem(`isLockerSelected_${username}`, 'true'); // Save state to localStorage
         }
     }
     //To manages the action buttons (Gift, Exchange, Empty) displayed when a user clicks on a locker button.
@@ -150,21 +151,24 @@ document.addEventListener('DOMContentLoaded', function() {
         container.appendChild(emptyButton);
     }
 
+    // Function to handle emptying a locker
     function emptyButtonClicked(locker, button) {
-        locker.isOccupied = false;
-        locker.user = null;
-        button.classList.remove('occupied');
-        button.textContent = locker.number;
-        button.style.backgroundColor = '';
-        isLockerSelected = false;
-        saveLockerData();
+        locker.isOccupied = false; // Mark the locker as unoccupied
+        locker.user = null; // Remove any user associated with this locker
+        button.classList.remove('occupied'); // Update the button's style to indicate it's available
+        button.textContent = locker.number; // Display only the locker number
+        button.style.backgroundColor = ''; // Reset the background color
+        isLockerSelected = false; // Update the state to reflect that the user has no selected locker
+        saveLockerData(); // Save the updated locker data to local storage
 
         const actionBanner = document.querySelector('.action-banner');
         if (actionBanner) {
-            actionBanner.remove();
+            actionBanner.remove(); // Remove any action banners from the view
         }
-        localStorage.setItem(`isLockerSelected_${username}`, 'false');
+        localStorage.setItem(`isLockerSelected_${username}`, 'false'); // Update local storage to indicate no locker is selected
+    
     }
+
      //To set the position of the action banner.
     function positionActionBanner(button, container) {
         const rect = button.getBoundingClientRect();
