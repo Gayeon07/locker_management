@@ -194,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return validUsers.includes(username);
     }
 
+    // Assign the locker to the recipient user
     function giftLockerToUser(locker, recipient) {
         locker.user = recipient;
         isLockerSelected = false;
@@ -201,6 +202,8 @@ document.addEventListener('DOMContentLoaded', function() {
         saveLockerData();
     }
 
+
+    // Send a gift request notification
     function sendGiftRequest(locker, recipient) {
         const notification = {
             type: 'gift',
@@ -215,9 +218,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         notifications.push(notification);
         saveNotifications();
-        console.log('Gift request sent:', notification); // 디버깅을 위한 로그 추가
+        console.log('Gift request sent:', notification); // Debug log
     }
 
+
+    // Send a swap request notification
     function sendSwapRequest(myLocker, theirLocker) {
         const notification = {
             type: 'swap',
@@ -233,10 +238,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         notifications.push(notification);
         saveNotifications();
-        console.log('Swap request sent:', notification); // 디버깅을 위한 로그 추가
+        console.log('Swap request sent:', notification); // Debug log
         alert(`Swap request sent to ${theirLocker.user}`);
     }
 
+
+    // Get the floor of the specified locker
     function getFloorOfLocker(locker) {
         for (let floor in lockersData) {
             if (lockersData[floor].includes(locker)) {
