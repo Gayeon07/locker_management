@@ -8,6 +8,15 @@ document.addEventListener('DOMContentLoaded', function() {
                           '1F - 2': Array.from({ length: 30 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
                           '2F': Array.from({ length: 24 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null }))
                       };
+     // 로컬 스토리지 초기화 함수
+     function clearLocalStorage() {
+        localStorage.clear(); // 로컬 스토리지 전체를 초기화
+        console.log('Local storage cleared');
+    }
+
+    // 초기화가 필요한 경우 아래 함수 호출
+    //clearLocalStorage(); // 주석을 제거하면 로컬 스토리지 전체를 초기화합니다.
+
 
     function saveLockerData() {
         localStorage.setItem('lockersData', JSON.stringify(lockersData));
@@ -116,11 +125,13 @@ document.addEventListener('DOMContentLoaded', function() {
         giftButton.onclick = function() {
             const recipient = prompt("Enter the recipient's ID:");
             if (recipient) {
-                if (isUserHasLocker(recipient)) {
+                if (!isValidUser(recipient)) {
+                    alert("Invalid user ID. Please try again.");
+                } else if (isUserHasLocker(recipient)) {
                     alert("The user already has a locker assigned.");
                 } else {
-                    giftLockerToUser(locker, recipient, button);
-                    alert(`Locker ${locker.number} has been gifted to ${recipient}`);
+                    sendGiftRequest(locker, recipient);
+                    alert(`Gift request sent to ${recipient}`);
                 }
             }
         };
@@ -180,14 +191,35 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
 
-    function giftLockerToUser(locker, recipient, button) {
+    function isValidUser(username) {
+        // Implement your logic to check if the user is valid.
+        // This could be a call to your server or a lookup in a local storage list of valid users.
+        const validUsers = ["22101989", "22102001", "22102003", "22102007"]; // Example list of valid users
+        return validUsers.includes(username);
+    }
+
+    function giftLockerToUser(locker, recipient) {
         locker.user = recipient;
         isLockerSelected = false;
         localStorage.setItem(`isLockerSelected_${username}`, 'false');
-        button.textContent = `${locker.user} - ${locker.number}`;
-        button.classList.add('occupied');
-        button.style.backgroundColor = '#dcdcdc';
         saveLockerData();
+    }
+
+    function sendGiftRequest(locker, recipient) {
+        const notification = {
+            type: 'gift',
+            from: locker.user,
+            to: recipient,
+            lockerNumber: locker.number,
+            floor: getFloorOfLocker(locker),
+            message: `Gift request from ${locker.user} for locker ${locker.number}`,
+            read: false,
+            accepted: false
+        };
+
+        notifications.push(notification);
+        saveNotifications();
+        console.log('Gift request sent:', notification); // 디버깅을 위한 로그 추가
     }
 
     function sendSwapRequest(myLocker, theirLocker) {
@@ -259,3 +291,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
     showFloor('1F - 1');
 });
+
