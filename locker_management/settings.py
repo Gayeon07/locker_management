@@ -75,16 +75,19 @@ WSGI_APPLICATION = 'locker_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
+# Attempted to use MySQL but it failed
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'locketing',
-        'USER' : 'locketing',
-        'PASSWORD' : 'locketing', # 설정한 비밀번호로 적어주면 된다.
-        'HOST' : '10.50.32.244',
-        'PORT' : '3306',
+        'ENGINE': 'django.db.backends.mysql',  # Specifies the database engine (MySQL in this case)
+        'NAME': 'locketing',  # Name of the database to use
+        'USER': 'locketing',  # Database user with access privileges
+        'PASSWORD': 'locketing',  # Password for the database user
+        'HOST': '10.50.32.244',  # IP address of the database server
+        'PORT': '3306',  # Port number the database server listens on
     }
 }
+
 
 
 # Password validation
