@@ -8,15 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
                           '1F - 2': Array.from({ length: 30 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
                           '2F': Array.from({ length: 24 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null }))
                       };
-     // 로컬 스토리지 초기화 함수
-     function clearLocalStorage() {
-        localStorage.clear(); // 로컬 스토리지 전체를 초기화
-        console.log('Local storage cleared');
-    }
-
-    // 초기화가 필요한 경우 아래 함수 호출
-    //clearLocalStorage(); // 주석을 제거하면 로컬 스토리지 전체를 초기화합니다.
-
 
     function saveLockerData() {
         localStorage.setItem('lockersData', JSON.stringify(lockersData));
@@ -250,15 +241,47 @@ document.addEventListener('DOMContentLoaded', function() {
         return null;
     }
 
+    function handleNotificationResponse(notificationId, isAccepted, notification) {
+        console.log(`Notification response: ${isAccepted ? 'Accepted' : 'Declined'}`); // 디버깅을 위한 로그 추가
+        const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+        let lockersData = JSON.parse(localStorage.getItem('lockersData'));
+    
+        if (isAccepted) {
+            const floor = notification.floor;
+            if (notification.type === 'swap') {
+                const myLocker = lockersData[floor].find(l => l.number === notification.myLocker);
+                const theirLocker = lockersData[floor].find(l => l.number === notification.theirLocker);
+                if (myLocker && theirLocker) {
+                    swapLockers(myLocker, theirLocker, floor, lockersData);
+                } else {
+                    alert("Unable to find the lockers for swap.");
+                }
+            } else if (notification.type === 'gift') {
+                const locker = lockersData[floor].find(l => l.number === notification.lockerNumber);
+                if (locker) {
+                    giftLockerToUser(locker, notification.to, lockersData);
+                } else {
+                    alert("Unable to find the locker for gifting.");
+                }
+            }
+        }
+    
+        // Remove the notification
+        notifications.splice(notificationId, 1);
+        localStorage.setItem('notifications', JSON.stringify(notifications));
+    
+        location.reload();
+    }
+    
     function swapLockers(myLocker, theirLocker, floor, lockersData) {
         console.log('Swapping lockers:', myLocker, theirLocker); // 디버깅을 위한 로그 추가
         const tempUser = myLocker.user;
         myLocker.user = theirLocker.user;
         theirLocker.user = tempUser;
-
+    
         myLocker.isOccupied = !!myLocker.user;
         theirLocker.isOccupied = !!theirLocker.user;
-
+    
         saveLockerData(lockersData);
         updateLockerButton(myLocker, floor);
         updateLockerButton(theirLocker, floor);
@@ -291,4 +314,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
     showFloor('1F - 1');
 });
-
