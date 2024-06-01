@@ -1,9 +1,9 @@
 # views.py
-
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 
+#basic user login functionality using Django views.
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -17,19 +17,21 @@ def login_view(request):
             return render(request, 'lockers/login.html', {'error': 'Invalid credentials'})
     return render(request, 'lockers/login.html')
 
+#To restrict access to the index_view to logged-in users only
 @login_required
 def index_view(request):
     username = request.session.get('username', request.user.username)
     return render(request, 'lockers/index.html', {'username': username})
 
+#To restrict access to the notifications_view to logged-in users only
 @login_required
 def notifications_view(request):
     return render(request, 'lockers/notifications.html')
 
-# 알림 전송 기능 제거
+# send_notification by MySQL 
+# we use code by localStorage
 # def send_notification(request):
 #    if request.method == 'POST':
 #        recipient_id = request.POST.get('recipient_id')
 #        message = request.POST.get('message')
-#        # 로컬 스토리지와 상호 작용하는 코드로 대체
 #        return JsonResponse({'status': 'success'})
