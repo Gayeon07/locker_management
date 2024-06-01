@@ -4,7 +4,55 @@
     <meta charset="UTF-8">
     <title>Notifications</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    {%load static%}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        h1 {
+            background-color: rgb(251, 226, 229);
+            font-family: 'DNF Bit Bit v2';
+            padding: 10px; /* 추가된 패딩으로 더 나은 시각적 효과 */
+            width: 100%; /* 화면 전체 너비로 설정 */
+            box-sizing: border-box; /* padding이 너비에 포함되도록 설정 */
+            margin: 0; /* 기본 마진 제거 */
+            text-align: center;
+        }
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 7px 15px;
+            background-color: #ffffff;
+            color: #333;
+            font-family: 'DNF Bit Bit v2';
+            text-decoration: none;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #e0e0e0;
+        }
+        #notifications-container {
+            width: 100%;
+            max-width: 800px; /* 최대 너비 설정 */
+            margin: 20px auto; /* 가운데 정렬 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+        }
+        .notification {
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease;
+        }
+        .notification:hover {
+            background-color: #fffdfd;
+        }
+        
+    </style>
 </head>
 <body>
     <h1>Notifications</h1>
