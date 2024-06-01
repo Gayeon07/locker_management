@@ -4,61 +4,7 @@
     <meta charset="UTF-8">
     <title>Notifications</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <style>
-        h1 {
-            background-color: rgb(251, 226, 229);
-            font-family: 'DNF Bit Bit v2';
-            padding: 10px; /* 추가된 패딩으로 더 나은 시각적 효과 */
-            width: 100%; /* 화면 전체 너비로 설정 */
-            box-sizing: border-box; /* padding이 너비에 포함되도록 설정 */
-            margin: 0; /* 기본 마진 제거 */
-            text-align: center;
-        }
-        .back-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 7px 15px;
-            background-color: #ffffff;
-            color: #333;
-            font-family: 'DNF Bit Bit v2';
-            text-decoration: none;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .back-button:hover {
-            background-color: #e0e0e0;
-        }
-        #notifications-container {
-            width: 100%;
-            max-width: 800px; /* 최대 너비 설정 */
-            margin: 20px auto; /* 가운데 정렬 */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-        }
-        .notification {
-            padding: 10px;
-            margin-bottom: 5px;
-            border: 1px solid #ccc;
-            background-color: #ffffff;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: background-color 0.3s ease;
-        }
-        .notification:hover {
-            background-color: #fffdfd;
-        }
-        .notification.unread {
-            font-weight: bold;
-            background-color: #ffcccc;
-        }
-        .notification.read {
-            color: #666;
-        }
-    </style>
 </head>
 <body>
     <h1>Notifications</h1>
@@ -68,35 +14,71 @@
     <button class="back-button" onclick="history.back()">Back</button>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('/get-notifications/') // 알림 데이터를 서버에서 가져오는 URL을 적절하게 설정해야 함
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.getElementById('notifications-container');
-                    data.notifications.forEach(notification => {
-                        const notificationDiv = document.createElement('div');
-                        notificationDiv.className = `notification ${notification.read ? 'read' : 'unread'}`;
-                        notificationDiv.textContent = notification.message;
-                        notificationDiv.dataset.id = notification.id; // 서버에서 각 알림에 대한 고유 ID를 제공해야 함
-                        notificationDiv.addEventListener('click', () => {
-                            fetch(`/mark-notification-read/${notification.id}/`, { // 읽음 상태로 표시하는 URL
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRFToken': csrfToken // CSRF 토큰을 적절하게 설정
-                                }
-                            }).then(response => {
-                                if (response.ok) {
-                                    notificationDiv.classList.remove('unread');
-                                    notificationDiv.classList.add('read');
-                                }
-                            });
-                        });
-                        container.appendChild(notificationDiv);
-                    });
-                });
+            const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+            const container = document.getElementById('notifications-container');
+            
+            notifications.forEach((notification, index) => {
+                const notificationDiv = document.createElement('div');
+                notificationDiv.className = `notification ${notification.read ? 'read' : 'unread'}`;
+                notificationDiv.textContent = notification.message;
+                notificationDiv.dataset.id = index; 
+                
+                const yesButton = document.createElement('button');
+                yesButton.textContent = "Yes";
+                yesButton.className = "yes-button";
+                yesButton.onclick = function() {
+                    handleNotificationResponse(index, true, notification.locker);
+                };
+                
+                const noButton = document.createElement('button');
+                noButton.textContent = "No";
+                noButton.className = "no-button";
+                noButton.onclick = function() {
+                    handleNotificationResponse(index, false, notification.locker);
+                };
+                
+                notificationDiv.appendChild(yesButton);
+                notificationDiv.appendChild(noButton);
+                container.appendChild(notificationDiv);
+            });
         });
+
+        function handleNotificationResponse(notificationId, isAccepted, locker) {
+            const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+            const notification = notifications[notificationId];
+            
+            if (isAccepted) {
+                const lockersData = JSON.parse(localStorage.getItem('lockersData'));
+                const lockerToUpdate = lockersData[locker.floor].find(l => l.number === locker.number);
+                lockerToUpdate.user = notification.recipient;
+                lockerToUpdate.isOccupied = true;
+                localStorage.setItem('lockersData', JSON.stringify(lockersData));
+            }
+            
+            notification.read = true;
+            notification.accepted = isAccepted;
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+            
+            location.reload(); 
+        }
+
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
     </script>
 </body>
 </html>
+
 
 
