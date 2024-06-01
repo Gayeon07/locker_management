@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded.');
-
+    
     let lockersData = localStorage.getItem('lockersData') ? 
                       JSON.parse(localStorage.getItem('lockersData')) : 
                       {
@@ -12,11 +12,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function saveLockerData() {
         localStorage.setItem('lockersData', JSON.stringify(lockersData));
     }
-
+    // Load notification data from local storage or initialize as an empty array.
     let notifications = localStorage.getItem('notifications') ? 
                         JSON.parse(localStorage.getItem('notifications')) : 
                         [];
-
+    // Function to save notification data to local storage.
     function saveNotifications() {
         localStorage.setItem('notifications', JSON.stringify(notifications));
     }
@@ -245,9 +245,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return null;
     }
-
+    // Function to handle the response to a notification. but not used
     function handleNotificationResponse(notificationId, isAccepted, notification) {
-        console.log(`Notification response: ${isAccepted ? 'Accepted' : 'Declined'}`); // 디버깅을 위한 로그 추가
+        console.log(`Notification response: ${isAccepted ? 'Accepted' : 'Declined'}`); 
         const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
         let lockersData = JSON.parse(localStorage.getItem('lockersData'));
     
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function swapLockers(myLocker, theirLocker, floor, lockersData) {
-        console.log('Swapping lockers:', myLocker, theirLocker); // 디버깅을 위한 로그 추가
+        console.log('Swapping lockers:', myLocker, theirLocker); // Debug
         const tempUser = myLocker.user;
         myLocker.user = theirLocker.user;
         theirLocker.user = tempUser;
