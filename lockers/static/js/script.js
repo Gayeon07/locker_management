@@ -13,6 +13,14 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('lockersData', JSON.stringify(lockersData));
     }
 
+    let notifications = localStorage.getItem('notifications') ? 
+                        JSON.parse(localStorage.getItem('notifications')) : 
+                        [];
+
+    function saveNotifications() {
+        localStorage.setItem('notifications', JSON.stringify(notifications));
+    }
+
     let isLockerSelected = isUserHasLocker(username);
 
     window.showFloor = function(floor) {
@@ -125,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (otherPerson) {
                 const theirLocker = getLockerByUser(otherPerson);
                 if (theirLocker) {
-                    swapLockers(locker, theirLocker);
+                    sendSwapRequest(locker, theirLocker);
                 } else {
                     alert("The specified user does not have a locker.");
                 }
@@ -182,7 +190,36 @@ document.addEventListener('DOMContentLoaded', function() {
         saveLockerData();
     }
 
-    function swapLockers(myLocker, theirLocker) {
+    function sendSwapRequest(myLocker, theirLocker) {
+        const notification = {
+            type: 'swap',
+            from: myLocker.user,
+            to: theirLocker.user,
+            myLocker: myLocker.number,
+            theirLocker: theirLocker.number,
+            floor: getFloorOfLocker(myLocker),
+            message: `Swap request from ${myLocker.user} for locker ${myLocker.number} with your locker ${theirLocker.number}`,
+            read: false,
+            accepted: false
+        };
+
+        notifications.push(notification);
+        saveNotifications();
+        console.log('Swap request sent:', notification); // 디버깅을 위한 로그 추가
+        alert(`Swap request sent to ${theirLocker.user}`);
+    }
+
+    function getFloorOfLocker(locker) {
+        for (let floor in lockersData) {
+            if (lockersData[floor].includes(locker)) {
+                return floor;
+            }
+        }
+        return null;
+    }
+
+    function swapLockers(myLocker, theirLocker, floor, lockersData) {
+        console.log('Swapping lockers:', myLocker, theirLocker); // 디버깅을 위한 로그 추가
         const tempUser = myLocker.user;
         myLocker.user = theirLocker.user;
         theirLocker.user = tempUser;
@@ -190,10 +227,9 @@ document.addEventListener('DOMContentLoaded', function() {
         myLocker.isOccupied = !!myLocker.user;
         theirLocker.isOccupied = !!theirLocker.user;
 
-        updateLockerButton(myLocker);
-        updateLockerButton(theirLocker);
-
-        saveLockerData();
+        saveLockerData(lockersData);
+        updateLockerButton(myLocker, floor);
+        updateLockerButton(theirLocker, floor);
         alert(`Locker ${myLocker.number} has been swapped with locker ${theirLocker.number}`);
     }
 
@@ -207,8 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return null;
     }
 
-    function updateLockerButton(locker) {
-        const floor = Object.keys(lockersData).find(f => lockersData[f].includes(locker));
+    function updateLockerButton(locker, floor) {
         const lockerIndex = lockersData[floor].indexOf(locker);
         const container = document.getElementById('lockers-container');
         const button = container.getElementsByClassName('locker')[lockerIndex];
@@ -224,5 +259,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
     showFloor('1F - 1');
 });
-
-

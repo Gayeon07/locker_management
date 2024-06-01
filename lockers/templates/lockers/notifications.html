@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Notifications</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
@@ -21,64 +22,67 @@
                 const notificationDiv = document.createElement('div');
                 notificationDiv.className = `notification ${notification.read ? 'read' : 'unread'}`;
                 notificationDiv.textContent = notification.message;
-                notificationDiv.dataset.id = index; 
-                
-                const yesButton = document.createElement('button');
-                yesButton.textContent = "Yes";
-                yesButton.className = "yes-button";
-                yesButton.onclick = function() {
-                    handleNotificationResponse(index, true, notification.locker);
-                };
-                
-                const noButton = document.createElement('button');
-                noButton.textContent = "No";
-                noButton.className = "no-button";
-                noButton.onclick = function() {
-                    handleNotificationResponse(index, false, notification.locker);
-                };
-                
-                notificationDiv.appendChild(yesButton);
-                notificationDiv.appendChild(noButton);
+                notificationDiv.dataset.id = index;
+
+                if (notification.type === 'swap') {
+                    notificationDiv.textContent = `Swap request from ${notification.from} for locker ${notification.myLocker} with your locker ${notification.theirLocker}`;
+
+                    const yesButton = document.createElement('button');
+                    yesButton.textContent = "Yes";
+                    yesButton.className = "yes-button";
+                    yesButton.onclick = function() {
+                        handleNotificationResponse(index, true, notification);
+                    };
+
+                    const noButton = document.createElement('button');
+                    noButton.textContent = "No";
+                    noButton.className = "no-button";
+                    noButton.onclick = function() {
+                        handleNotificationResponse(index, false, notification);
+                    };
+
+                    notificationDiv.appendChild(yesButton);
+                    notificationDiv.appendChild(noButton);
+                }
+
                 container.appendChild(notificationDiv);
             });
         });
 
-        function handleNotificationResponse(notificationId, isAccepted, locker) {
+        function handleNotificationResponse(notificationId, isAccepted, notification) {
+            console.log(`Notification response: ${isAccepted ? 'Accepted' : 'Declined'}`); // 디버깅을 위한 로그 추가
             const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-            const notification = notifications[notificationId];
-            
+            let lockersData = JSON.parse(localStorage.getItem('lockersData'));
+
             if (isAccepted) {
-                const lockersData = JSON.parse(localStorage.getItem('lockersData'));
-                const lockerToUpdate = lockersData[locker.floor].find(l => l.number === locker.number);
-                lockerToUpdate.user = notification.recipient;
-                lockerToUpdate.isOccupied = true;
-                localStorage.setItem('lockersData', JSON.stringify(lockersData));
+                const floor = notification.floor;
+                const myLocker = lockersData[floor].find(l => l.number === notification.myLocker);
+                const theirLocker = lockersData[floor].find(l => l.number === notification.theirLocker);
+                swapLockers(myLocker, theirLocker, floor, lockersData);
             }
-            
-            notification.read = true;
-            notification.accepted = isAccepted;
+
+            // Remove the notification
+            notifications.splice(notificationId, 1);
             localStorage.setItem('notifications', JSON.stringify(notifications));
-            
-            location.reload(); 
+
+            location.reload();
         }
 
-        function getCSRFToken() {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, 10) === 'csrftoken=') {
-                        cookieValue = decodeURIComponent(cookie.substring(10));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
+        function swapLockers(myLocker, theirLocker, floor, lockersData) {
+            console.log('Swapping lockers:', myLocker, theirLocker); // 디버깅을 위한 로그 추가
+            const tempUser = myLocker.user;
+            myLocker.user = theirLocker.user;
+            theirLocker.user = tempUser;
+
+            myLocker.isOccupied = !!myLocker.user;
+            theirLocker.isOccupied = !!theirLocker.user;
+
+            saveLockerData(lockersData);
+        }
+
+        function saveLockerData(lockersData) {
+            localStorage.setItem('lockersData', JSON.stringify(lockersData));
         }
     </script>
 </body>
 </html>
-
-
-
