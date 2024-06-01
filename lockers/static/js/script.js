@@ -279,7 +279,11 @@ document.addEventListener('DOMContentLoaded', function() {
             saveLockerData();
             alert(`Locker ${myLocker.number} has been swapped with locker ${theirLocker.number}`);
 
-            container.remove();
+            // Remove the action banner after swapping
+            const actionBanner = document.querySelector('.action-banner');
+            if (actionBanner) {
+                actionBanner.remove();
+            }
         }
     }
 
