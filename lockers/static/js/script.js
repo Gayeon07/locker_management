@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderLockers(floor);
     }
 
+    //Render the locker corresponding to the given floor on the screen.
     function renderLockers(floor) {
         console.log(`Rendering lockers for floor: ${floor}`);
         const container = document.getElementById('lockers-container');
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem(`isLockerSelected_${username}`, 'true');
         }
     }
-
+    //To manages the action buttons (Gift, Exchange, Empty) displayed when a user clicks on a locker button.
     function showActionButtons(button, locker) {
         const existingBanner = document.querySelector('.action-banner');
         if (existingBanner) {
@@ -109,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, { once: true });
     }
-
+    //To add Gift, Exchange, and Empty buttons to the action container.
     function addButtonsToActionContainer(container, locker, button) {
         const giftButton = document.createElement('button');
         giftButton.textContent = 'Gift';
@@ -164,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         localStorage.setItem(`isLockerSelected_${username}`, 'false');
     }
-
+     //To set the position of the action banner.
     function positionActionBanner(button, container) {
         const rect = button.getBoundingClientRect();
         container.style.position = 'absolute';
