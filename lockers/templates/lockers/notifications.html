@@ -6,89 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        #notifications-container {
-            width: 100%;
-            max-width: 600px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
-        .notification {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            font-size: 1em;
-            color: #555;
-        }
-
-        .notification:last-child {
-            border-bottom: none;
-        }
-
-        .notification .yes-button, .notification .no-button {
-            margin: 10px 5px 0 0;
-            padding: 10px 15px;
-            font-size: 0.9em;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .notification .yes-button {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .notification .no-button {
-            background-color: #f44336;
-            color: white;
-        }
-
-        .notification .yes-button:hover {
-            background-color: #45a049;
-        }
-
-        .notification .no-button:hover {
-            background-color: #da190b;
-        }
-
-        .back-button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 1em;
-            border: none;
-            border-radius: 4px;
-            background-color: #008CBA;
-            color: white;
-            cursor: pointer;
-        }
-
-        .back-button:hover {
-            background-color: #007bb5;
-        }
-    </style>
 </head>
 <body>
-    <h1>Notifications</h1>
+    <h1 class="noti">Notifications</h1>
     <div id="notifications-container">
         <!-- 알림 내용이 여기에 동적으로 삽입됩니다. -->
     </div>
