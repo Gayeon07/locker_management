@@ -292,8 +292,8 @@ document.addEventListener('DOMContentLoaded', function() {
         myLocker.user = theirLocker.user;
         theirLocker.user = tempUser;
     
-        myLocker.isOccupied = !!myLocker.user;
-        theirLocker.isOccupied = !!theirLocker.user;
+        myLocker.isOccupied = !!myLocker.user; // Updates occupation status
+        theirLocker.isOccupied = !!theirLocker.user; // Updates occupation status
     
         saveLockerData(lockersData); // Persists updated locker data to local storage
         updateLockerButton(myLocker, floor); // Refreshes the locker button display
@@ -314,10 +314,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateLockerButton(locker, floor) {
         // Updates the display properties of a locker button based on its occupation status
-        const lockerIndex = lockersData[floor].indexOf(locker);
+        const lockerIndex = lockersData[floor].indexOf(locker); // Finds the index of the locker in the data array
         const container = document.getElementById('lockers-container');
-        const button = container.getElementsByClassName('locker')[lockerIndex];
-        button.textContent = locker.isOccupied ? `${locker.user} - ${locker.number}` : locker.number;
+        const button = container.getElementsByClassName('locker')[lockerIndex]; // Retrieves the button for the locker
+        button.textContent = locker.isOccupied ? `${locker.user} - ${locker.number}` : locker.number; // Updates button text based on occupation status
         if (locker.isOccupied) {
             button.classList.add('occupied');
             button.style.backgroundColor = '#dcdcdc';
