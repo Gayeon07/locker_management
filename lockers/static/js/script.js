@@ -1,25 +1,22 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Document loaded.'); // 디버깅을 위한 콘솔 로그
+    console.log('Document loaded.');
 
-    // Load or initialize locker data from localStorage
-    let lockersData = localStorage.getItem('lockersData') ?
-                      JSON.parse(localStorage.getItem('lockersData')) :
+    let lockersData = localStorage.getItem('lockersData') ? 
+                      JSON.parse(localStorage.getItem('lockersData')) : 
                       {
                           '1F - 1': Array.from({ length: 32 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
                           '1F - 2': Array.from({ length: 30 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null })),
                           '2F': Array.from({ length: 24 }, (_, i) => ({ number: i + 1, isOccupied: false, user: null }))
                       };
 
-    // Function to save locker data to localStorage
     function saveLockerData() {
         localStorage.setItem('lockersData', JSON.stringify(lockersData));
     }
 
-    // Check if a locker is already selected by the current user on page load
-    let isLockerSelected = localStorage.getItem(`isLockerSelected_${username}`) === 'true';
+    let isLockerSelected = isUserHasLocker(username);
 
     window.showFloor = function(floor) {
-        console.log(`Showing floor: ${floor}`); // 디버깅을 위한 콘솔 로그
+        console.log(`Showing floor: ${floor}`);
         var floors = ['1F - 1', '2F', '1F - 2'];
         floors.forEach(function(f) {
             document.getElementById('btn-' + f).classList.remove('active');
@@ -29,15 +26,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderLockers(floor) {
-        console.log(`Rendering lockers for floor: ${floor}`); // 디버깅을 위한 콘솔 로그
+        console.log(`Rendering lockers for floor: ${floor}`);
         const container = document.getElementById('lockers-container');
-        container.innerHTML = ''; // 기존 내용 삭제
+        container.innerHTML = '';
 
         const table = document.createElement('table');
         const data = lockersData[floor];
         let row;
 
-        // 층마다 사물함을 몇 개씩 가로로 배치할지 결정하는 변수 추가
         const lockersPerRow = floor === '1F - 1' ? 8 : 6;
 
         data.forEach((locker, index) => {
@@ -50,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
             button.className = 'locker';
             button.textContent = locker.isOccupied ? `${locker.user} - ${locker.number}` : locker.number;
             button.onclick = function(event) {
-                event.stopPropagation(); // Prevent event from bubbling to higher elements
+                event.stopPropagation();
                 lockerButtonClicked(button, locker);
             };
             cell.appendChild(button);
@@ -69,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (locker.isOccupied && locker.user === username) {
             showActionButtons(button, locker);
         } else if (isLockerSelected) {
-            alert("You have already selected another locker.");
+            alert("You already have a locker assigned.");
         } else if (!locker.isOccupied) {
             locker.isOccupied = true;
             locker.user = username;
@@ -77,8 +73,8 @@ document.addEventListener('DOMContentLoaded', function() {
             button.textContent = `${locker.user} ${locker.number}`;
             button.style.backgroundColor = '#dcdcdc';
             isLockerSelected = true;
-            saveLockerData(); // Save changes to localStorage
-            localStorage.setItem(`isLockerSelected_${username}`, 'true'); // Save the selection state for the current user
+            saveLockerData();
+            localStorage.setItem(`isLockerSelected_${username}`, 'true');
         }
     }
 
@@ -91,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const actionContainer = document.createElement('div');
         actionContainer.className = 'action-banner';
         actionContainer.onclick = function(event) {
-            event.stopPropagation(); // Prevent click event from propagating to higher elements
+            event.stopPropagation();
         };
 
         addButtonsToActionContainer(actionContainer, locker, button);
@@ -99,12 +95,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(actionContainer);
         positionActionBanner(button, actionContainer);
 
-        // Add event listener to body to remove banner when clicking outside of it
         document.body.addEventListener('click', function(event) {
             if (!actionContainer.contains(event.target)) {
                 actionContainer.remove();
             }
-        }, { once: true }); // Listener will auto-remove after execution
+        }, { once: true });
     }
 
     function addButtonsToActionContainer(container, locker, button) {
@@ -128,7 +123,12 @@ document.addEventListener('DOMContentLoaded', function() {
         swapButton.onclick = function() {
             const otherPerson = prompt("Enter the ID of the person you want to swap with:");
             if (otherPerson) {
-                alert(`You chose to swap locker ${locker.number} with ${otherPerson}`);
+                const theirLocker = getLockerByUser(otherPerson);
+                if (theirLocker) {
+                    swapLockers(locker, theirLocker);
+                } else {
+                    alert("The specified user does not have a locker.");
+                }
             }
         };
         container.appendChild(swapButton);
@@ -146,14 +146,13 @@ document.addEventListener('DOMContentLoaded', function() {
         button.textContent = locker.number;
         button.style.backgroundColor = '';
         isLockerSelected = false;
-        saveLockerData();  // Save the changes to localStorage
-    
-        // Remove the action banner from the view
+        saveLockerData();
+
         const actionBanner = document.querySelector('.action-banner');
         if (actionBanner) {
             actionBanner.remove();
         }
-        localStorage.setItem(`isLockerSelected_${username}`, 'false');  // Reset the selection state for the current user
+        localStorage.setItem(`isLockerSelected_${username}`, 'false');
     }
 
     function positionActionBanner(button, container) {
@@ -164,40 +163,6 @@ document.addEventListener('DOMContentLoaded', function() {
         container.style.zIndex = 1000;
     }
 
-    function sendNotification(recipientId, message) {
-        fetch('/send-notification/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken()
-            },
-            body: JSON.stringify({ recipient_id: recipientId, message: message })
-        }).then(response => response.json())
-          .then(data => {
-            if(data.status === 'success') {
-                alert('Notification sent successfully.');
-            }
-        });
-    }
-    
-    document.querySelectorAll('.notification').forEach(notification => {
-        notification.addEventListener('click', () => {
-            const notificationId = notification.dataset.id;
-            fetch(`/mark-notification-read/${notificationId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCSRFToken()
-                }
-            }).then(response => {
-                if (response.ok) {
-                    notification.classList.remove('unread');
-                    notification.classList.add('read');
-                }
-            });
-        });
-    });
-    
-    // Check if a user already has a locker assigned
     function isUserHasLocker(username) {
         for (let floor in lockersData) {
             if (lockersData[floor].some(locker => locker.user === username)) {
@@ -207,33 +172,57 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
 
-    // Gift locker to another user
     function giftLockerToUser(locker, recipient, button) {
         locker.user = recipient;
         isLockerSelected = false;
-        sessionStorage.setItem(`isLockerSelected_${username}`, 'false');
+        localStorage.setItem(`isLockerSelected_${username}`, 'false');
         button.textContent = `${locker.user} - ${locker.number}`;
         button.classList.add('occupied');
         button.style.backgroundColor = '#dcdcdc';
         saveLockerData();
     }
 
-    // Get CSRF token from cookie
-    function getCSRFToken() {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, 10) === 'csrftoken=') {
-                    cookieValue = decodeURIComponent(cookie.substring(10));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
+    function swapLockers(myLocker, theirLocker) {
+        const tempUser = myLocker.user;
+        myLocker.user = theirLocker.user;
+        theirLocker.user = tempUser;
+
+        myLocker.isOccupied = !!myLocker.user;
+        theirLocker.isOccupied = !!theirLocker.user;
+
+        updateLockerButton(myLocker);
+        updateLockerButton(theirLocker);
+
+        saveLockerData();
+        alert(`Locker ${myLocker.number} has been swapped with locker ${theirLocker.number}`);
     }
 
-    // 기본으로 1층을 보여줍니다.
+    function getLockerByUser(username) {
+        for (let floor in lockersData) {
+            const locker = lockersData[floor].find(locker => locker.user === username);
+            if (locker) {
+                return locker;
+            }
+        }
+        return null;
+    }
+
+    function updateLockerButton(locker) {
+        const floor = Object.keys(lockersData).find(f => lockersData[f].includes(locker));
+        const lockerIndex = lockersData[floor].indexOf(locker);
+        const container = document.getElementById('lockers-container');
+        const button = container.getElementsByClassName('locker')[lockerIndex];
+        button.textContent = locker.isOccupied ? `${locker.user} - ${locker.number}` : locker.number;
+        if (locker.isOccupied) {
+            button.classList.add('occupied');
+            button.style.backgroundColor = '#dcdcdc';
+        } else {
+            button.classList.remove('occupied');
+            button.style.backgroundColor = '';
+        }
+    }
+
     showFloor('1F - 1');
 });
+
+
