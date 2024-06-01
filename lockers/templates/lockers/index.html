@@ -8,15 +8,25 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
+    <!-- Floor selection buttons -->
     <div class="floor-buttons">
         <button id="btn-1F - 1" class="floor-button active" onclick="showFloor('1F - 1')">1F - 1</button>
         <button id="btn-1F - 2" class="floor-button" onclick="showFloor('1F - 2')">1F - 2</button>
         <button id="btn-2F" class="floor-button" onclick="showFloor('2F')">2F</button>
     </div>
-    <div id="lockers-container"></div>
+    <!-- Container for displaying lockers based on selected floor -->
+    <div id="lockers-container">
+        {% for locker in lockers %}
+            <button class="locker {% if locker.is_occupied %}occupied{% endif %}"
+                    data-id="{{ locker.id }}">
+                Locker {{ locker.number }}
+            </button>
+        {% endfor %}
+    </div>
     <script>
-        const username = "{{ username }}"; // 현재 로그인한 사용자의 username
+        const username = "{{ username }}"; // Store logged-in user's username
 
+        // Data structure for storing lockers' information
         const lockersData = {
             '1F - 1': `
                 <table>
@@ -146,18 +156,20 @@
             `
         };
 
+        // Function to show lockers of the selected floor
         function showFloor(floor) {
             document.getElementById('lockers-container').innerHTML = lockersData[floor];
             document.querySelectorAll('.floor-button').forEach(button => button.classList.remove('active'));
             document.getElementById(`btn-${floor}`).classList.add('active');
         }
 
-        // 초기 로드 시 1층 사물함을 보여줌
+        // Initial load to display first floor lockers
         document.addEventListener('DOMContentLoaded', () => {
             showFloor('1F - 1');
         });
     </script>
     <script src="{% static 'js/script.js' %}"></script>
+    <!-- Button to navigate to notifications page -->
     <div class="notification-button">
         <button id="btn-notification" class="notification-button" onclick="window.location.href='/notifications/'">notifications</button>
     </div>
