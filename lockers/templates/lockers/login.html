@@ -3,7 +3,7 @@
 <head>
     <title>Login</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"> <!-- Link to external CSS -->
 </head>
 
 <body class="login-page">
@@ -13,13 +13,13 @@
             {% csrf_token %} <!-- CSRF protection token -->
             <div class="input-container">
                 <input type="text" name="username" id="username" class="input-field" placeholder=" " required>
-                <label class="input-label" for="username">ID:</label>
+                <label class="input-label" for="username">ID:</label> <!-- Username input -->
             </div>
             <div class="input-container">
                 <input type="password" name="password" id="password" class="input-field" placeholder=" " required>
-                <label class="input-label" for="password">PW:</label>
+                <label class="input-label" for="password">PW:</label> <!-- Password input -->
             </div>
-            <button type="submit" class="submit-button">Login</button>
+            <button type="submit" class="submit-button">Login</button> 
         </form>
         {% if error %}
             <p class="error-message">{{ error }}</p> <!-- Display errors if login fails -->
