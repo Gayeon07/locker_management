@@ -286,6 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function swapLockers(myLocker, theirLocker, floor, lockersData) {
+        // Swaps two lockers and updates their occupation status in the UI and storage
         console.log('Swapping lockers:', myLocker, theirLocker); // Debug
         const tempUser = myLocker.user;
         myLocker.user = theirLocker.user;
@@ -294,13 +295,14 @@ document.addEventListener('DOMContentLoaded', function() {
         myLocker.isOccupied = !!myLocker.user;
         theirLocker.isOccupied = !!theirLocker.user;
     
-        saveLockerData(lockersData);
-        updateLockerButton(myLocker, floor);
+        saveLockerData(lockersData); // Persists updated locker data to local storage
+        updateLockerButton(myLocker, floor); // Refreshes the locker button display
         updateLockerButton(theirLocker, floor);
         alert(`Locker ${myLocker.number} has been swapped with locker ${theirLocker.number}`);
     }
 
     function getLockerByUser(username) {
+        // Returns a locker associated with a specific user, or null if not found
         for (let floor in lockersData) {
             const locker = lockersData[floor].find(locker => locker.user === username);
             if (locker) {
@@ -311,6 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateLockerButton(locker, floor) {
+        // Updates the display properties of a locker button based on its occupation status
         const lockerIndex = lockersData[floor].indexOf(locker);
         const container = document.getElementById('lockers-container');
         const button = container.getElementsByClassName('locker')[lockerIndex];

@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <style>
-    /* lockers/static/css/styles.css */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
@@ -51,47 +50,52 @@ body {
 <body>
     <h1 class="noti">Notifications</h1>
     <div id="notifications-container">
-        <!-- 알림 내용이 여기에 동적으로 삽입됩니다. -->
     </div>
     <button class="back-button" onclick="history.back()">Back</button>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
             const container = document.getElementById('notifications-container');
-            
+            // Iterate through each notification and its index
             notifications.forEach((notification, index) => {
+                // Create a div element for the notification
                 const notificationDiv = document.createElement('div');
+              // Set the class for the notification div based on read status
                 notificationDiv.className = `notification ${notification.read ? 'read' : 'unread'}`;
+              // Store the notification index in a data attribute
                 notificationDiv.dataset.id = index;
-
+            // Set the notification message based on the type of notification
                 if (notification.type === 'swap') {
                     notificationDiv.textContent = `Swap request from ${notification.from} for locker ${notification.myLocker} with your locker ${notification.theirLocker}`;
                 } else if (notification.type === 'gift') {
                     notificationDiv.textContent = `Gift request from ${notification.from} for locker ${notification.lockerNumber}`;
                 }
-
+            // Create a "Yes" button for accepting the notification
                 const yesButton = document.createElement('button');
                 yesButton.textContent = "Yes";
                 yesButton.className = "yes-button";
+              // Add an onclick event to handle acceptance of the notification
                 yesButton.onclick = function() {
                     handleNotificationResponse(index, true, notification);
                 };
-
+            // Create a "No" button for declining the notification
                 const noButton = document.createElement('button');
                 noButton.textContent = "No";
                 noButton.className = "no-button";
+              // Add an onclick event to handle declining of the notification
                 noButton.onclick = function() {
                     handleNotificationResponse(index, false, notification);
                 };
-
+            // Append the "Yes" and "No" buttons to the notification div
                 notificationDiv.appendChild(yesButton);
                 notificationDiv.appendChild(noButton);
+               // Append the notification div to the container
                 container.appendChild(notificationDiv);
             });
         });
-
+      // Function to handle the user's response to a notification
         function handleNotificationResponse(notificationId, isAccepted, notification) {
-            console.log(`Notification response: ${isAccepted ? 'Accepted' : 'Declined'}`); // 디버깅을 위한 로그 추가
+            console.log(`Notification response: ${isAccepted ? 'Accepted' : 'Declined'}`); 
             const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
             let lockersData = JSON.parse(localStorage.getItem('lockersData'));
 
@@ -121,7 +125,7 @@ body {
 
             location.reload();
         }
-
+      // Function to swap the users of two lockers
         function swapLockers(myLocker, theirLocker, floor, lockersData) {
             console.log('Swapping lockers:', myLocker, theirLocker); // 디버깅을 위한 로그 추가
             const tempUser = myLocker.user;
@@ -134,7 +138,7 @@ body {
             saveLockerData(lockersData);
             alert(`Locker ${myLocker.number} has been swapped with locker ${theirLocker.number}`);
         }
-
+      // Function to gift a locker to a recipient
         function giftLockerToUser(locker, recipient, lockersData) {
             locker.user = recipient;
             locker.isOccupied = true;
@@ -142,11 +146,10 @@ body {
             saveLockerData(lockersData);
             alert(`Locker ${locker.number} has been gifted to ${recipient}`);
         }
-
+      // Function to save locker data to localStorage
         function saveLockerData(lockersData) {
             localStorage.setItem('lockersData', JSON.stringify(lockersData));
         }
     </script>
 </body>
 </html>
-
