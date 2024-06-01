@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function isValidUser(username) {
         // Implement your logic to check if the user is valid.
         // This could be a call to your server or a lookup in a local storage list of valid users.
-        const validUsers = ["22101989", "22102001", "22102003", "22102007"]; // Example list of valid users
+        const validUsers = ["22101989", "22102001", "22102003", "22102007","10101010"]; // Example list of valid users
         return validUsers.includes(username);
     }
 
