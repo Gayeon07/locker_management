@@ -7,6 +7,206 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+<style>
+    /* lockers/static/css/styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.floor-buttons {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.floor-button {
+    flex: 1;
+    padding: 20px;
+    margin: 0;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+    font-family: 'DNF Bit Bit v2', Arial, sans-serif;
+}
+
+.floor-button.active {
+    background-color: #ffdada;
+}
+
+.lockers {
+    display: none;
+    justify-content: center;
+}
+
+.lockers.active {
+    display: flex;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+td {
+    border: 1px solid #000;
+    padding: 0;
+    position: relative;
+}
+
+.locker {
+    width: 100px;
+    height: 100px;
+    background-color: #f0f0f0;
+    border: none;
+    text-align: center;
+    line-height: 100px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.locker:hover {
+    background-color: #ffffff;
+    transform: scale(1.05);
+}
+
+.locker.occupied {
+    background-color: #dcdcdc; /* 배정된 사물함은 회색으로 표시 */
+    color: #000;
+    font-weight: bold;
+}
+
+.action-banner {
+    background-color: #ffe6e6;
+    border: 1px dashed #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 1000; /* 배너가 사물함 위에 표시되도록 설정 */
+}
+
+.action-banner button {
+    width: 100%;
+    padding: 10px 10px;
+    margin: 10px 0;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.notification-button {
+    position: fixed; /* 화면에 고정 */
+    right: 20px; /* 오른쪽 끝에서 20px 떨어진 위치 */
+    bottom: 20px; /* 하단에서 20px 떨어진 위치 */
+    z-index: 1000; /* 다른 요소들 위에 표시 */
+    cursor: pointer; /* 마우스 오버 시 커서 변경 */
+    font-family: 'DNF Bit Bit v2';
+    padding: 7px;
+    border-radius: 5px;
+    background-color: white;
+    border: 2px solid #ccc
+}
+
+.notification-button:hover {
+    background-color: #e0e0e0;
+}
+
+.notifications-container {
+    width: 80%;
+    max-width: 800px;
+    
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    margin-top: 40px;
+}
+
+.notification {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notification:last-child {
+    border-bottom: none;
+}
+
+.notification.read {
+    background-color: #f0f0f0;
+}
+
+.notification.unread {
+    background-color: #ffffff;
+    border-radius: 5px;
+    margin-top: 20px;
+    border: 2px solid #969696;
+}
+
+.notification button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+.notification .yes-button {
+    background-color: #ffdada;
+    color: black;
+    border: 2px solid #969696;
+}
+
+.notification .no-button {
+    background-color: #ffdada;
+    color: black;
+    border: 2px solid #969696;
+}
+
+.notification .yes-button:hover {
+    background-color: #ffdada;
+}
+
+.notification .no-button:hover {
+    background-color: #ffdada;
+}
+
+.back-button {
+    display: block;
+    margin: 20px auto;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-family: 'DNF Bit Bit v2';
+    background-color: #e0e0e0;
+    border: 2px solid #969696;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #e0e0e0;
+}
+
+.noti {
+    font-family: 'DNF Bit Bit v2', Arial, sans-serif;
+}
+</style>
 <body>
     <h1 class="noti">Notifications</h1>
     <div id="notifications-container">
