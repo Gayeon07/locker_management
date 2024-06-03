@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'locker_management.wsgi.application'
 
 
 # Attempted to use MySQL but it failed
-DATABASES = {
+""" DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Specifies the database engine (MySQL in this case)
         'NAME': 'locketing',  # Name of the database to use
@@ -86,8 +86,14 @@ DATABASES = {
         'HOST': '10.50.32.244',  # IP address of the database server
         'PORT': '3306',  # Port number the database server listens on
     }
-}
+} """
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 # Password validation
